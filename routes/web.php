@@ -11,6 +11,9 @@
 |
 */
 
+//ruta base
+Route::get('/azs', 'azsController@index');
+
 Route::get('/', function () {
     return view('welcome');
 });
