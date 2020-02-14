@@ -11,7 +11,7 @@
 |
 */
 
-//ruta base
+//ruta bas
 Route::get('/azs', 'azsController@index');
 
 Route::get('/', function () {
