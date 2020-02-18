@@ -7,30 +7,31 @@ use Illuminate\Http\Request;
 class azsController extends Controller
 {
     const PALABRAS_ESPECIALES = [
-        'Tobir',
-        'Miguel',
-        'Otherion',
-        'Muzhar',
+        'tobir',
+        'miguel',
+        'otherion',
+        'muzhar',
         'aydahar'
-    ];
-
-    CONST PALABRAS_ESPECIALES_2 = [
-        '**************',
-        '^^^^^^^^^^^^^^',
-        '$$$$$$$$$$$$$$',
-        '##############',
-        '@@@@@@@@@@@@@@'
     ];
 
     public function index(Request $request)
     {
-        $texto = $this->traslate($request->input('texto'));
+        $words = explode(" ", $request->input('texto'));
+
+        $texto = "";
+        foreach ( $words as $word) {
+            $texto .= " ". $this->traslateWord($word);
+        }
+
         return view('translate', compact('texto'));
 
     }
 
-    //fasdfasdfasdfas
-    private function traslate($text) {
+    private function traslateWord($text) {
+
+        if ($this->isSpecialWord($text)) {
+            return $text;
+        }
 
         $entradaOriginal = $text;
         $vocales =    ['A', 'E', 'I', 'O', 'U', 'Y'];
@@ -43,7 +44,7 @@ class azsController extends Controller
 
         // exceptiones
 
-        $entrada = $this->convertSpecialWords($entradaOriginal);
+        $entrada = $entradaOriginal;
 
         $arrayEntrada = str_split($entrada);
 
@@ -73,33 +74,12 @@ class azsController extends Controller
             }
         }
 
-        $palabraFinal = $this->decodeSpecialWords($palabraFinal);
-
         return $palabraFinal;
     }
 
 
-    private function convertSpecialWords($texto)
+    private function isSpecialWord($word)
     {
-        $textoConvertido = $texto;
-        foreach (self::PALABRAS_ESPECIALES as $indice => $palabra) {
-            if (strpos($texto, $palabra) !== false) {
-                $textoConvertido = str_replace($palabra, self::PALABRAS_ESPECIALES_2[$indice], $textoConvertido);
-            }
-        }
-
-        return $textoConvertido;
-    }
-
-    private function decodeSpecialWords($texto)
-    {
-        $textoConvertido = $texto;
-        foreach (self::PALABRAS_ESPECIALES_2 as $indice => $palabra) {
-            if (strpos($texto, $palabra) !== false) {
-                $textoConvertido = str_replace($palabra, self::PALABRAS_ESPECIALES[$indice], $textoConvertido);
-            }
-        }
-
-        return $textoConvertido;
+        return in_array(strtolower($word), self::PALABRAS_ESPECIALES);
     }
 }
